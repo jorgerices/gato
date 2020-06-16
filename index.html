@@ -142,8 +142,8 @@
 							Puntajes Parciales:
 						</div>
 						<div class="card-body">
-							<h5 class="card-title">X: 3</h5>
-							<h5 class="card-title">O: 2</h5>
+							<h5 class="card-title">X: <span id="parcial-X">0</span></h5>
+							<h5 class="card-title">O: <span id="parcial-O">0</span></h5>
 						</div>
 					</div>
 				</div>
@@ -161,7 +161,7 @@
 						</button>
 					</div>
 					<div class="modal-body">
-						Felicidades al Jugador O por ganar.
+						Felicidades al Jugador <span id="jugador-ganador">O</span> por ganar.
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -193,50 +193,68 @@
 				return valores;
 			}
 
-			function ganar_jugador_O(num1, num2, num3) {
+			function ganar_jugador(num1, num2, num3, jugador) {
+				$('#jugador-ganador').html(jugador);
 				$('#modal-ganador').modal();
 				$('.celda:eq(' + num1 + ')').addClass('ganadora');
 				$('.celda:eq(' + num2 + ')').addClass('ganadora');
 				$('.celda:eq(' + num3 + ')').addClass('ganadora');
 				hay_ganador = true;
+				// actualizar puntajes
+				if (jugador == 'X') {
+					// sumo 1 al ptje parcial de X
+					var puntaje = $('#parcial-X').html();
+					puntaje = parseInt(puntaje);
+					puntaje += 1;
+					$('#parcial-X').html(puntaje);
+					localStorage.setItem('parcial_x', puntaje);
+
+				} else {
+					// sumo 1 al ptje parcial de O
+					var puntaje = $('#parcial-O').html();
+					puntaje = parseInt(puntaje);
+					puntaje += 1;
+					$('#parcial-O').html(puntaje);
+					localStorage.setItem('parcial_o', puntaje);
+				}
 			}
 
 			function verificar_si_gana(jugador) {
 				var valores = traer_valores();
 				// primera fila
 				if (valores[0] == jugador && valores[1] == jugador && valores[2] == jugador) {
-					ganar_jugador_O('0', '1', '2');
+					ganar_jugador('0', '1', '2', jugador);
 				
 				// segunda fila
 				} else if (valores[3] == jugador && valores[4] == jugador && valores[5] == jugador) {
-					ganar_jugador_O('3', '4', '5');
+					ganar_jugador('3', '4', '5', jugador);
 				
 				// tercera fila
 				} else if (valores[6] == jugador && valores[7] == jugador && valores[8] == jugador) {
-					ganar_jugador_O('6', '7', '8');
+					ganar_jugador('6', '7', '8', jugador);
 				}
 				
 				// primera columna
 				else if (valores[0] == jugador && valores[3] == jugador && valores[6] == jugador) {
-					ganar_jugador_O('0', '3', '6');
+					ganar_jugador('0', '3', '6', jugador);
 				}
 				// segunda columna
 				else if (valores[1] == jugador && valores[4] == jugador && valores[7] == jugador) {
-					ganar_jugador_O('1', '4', '7');
+					ganar_jugador('1', '4', '7', jugador);
 				}
 				// tercera columna
 				else if (valores[2] == jugador && valores[5] == jugador && valores[8] == jugador) {
-					ganar_jugador_O('2', '5', '8');
+					ganar_jugador('2', '5', '8', jugador);
 				}
 
 				// diagonal ascendente
 				else if (valores[2] == jugador && valores[4] == jugador && valores[6] == jugador) {
-					ganar_jugador_O('2', '4', '6');
+					ganar_jugador('2', '4', '6', jugador);
 				}
 
 				// diagonal descendente
 				else if (valores[0] == jugador && valores[4] == jugador && valores[8] == jugador) {
-					ganar_jugador_O('0', '4', '8');
+					ganar_jugador('0', '4', '8', jugador);
 				}
 			}
 
@@ -281,6 +299,16 @@
 				
 				hay_ganador = false;
 			});
+		
+			// el código de inicio de la página lo vamos a meter en una funcion anónima autoejecutable
+			(function() {
+				// cuando inicie la página, cargo los puntajes que ya tenía de antes
+				var parcial_x = localStorage.getItem('parcial_x') || '0';
+				var parcial_o = localStorage.getItem('parcial_o') || '0'; 
+				// los meto en el HTML
+				$('#parcial-X').html(parcial_x);
+				$('#parcial-O').html(parcial_o);
+			})();
 		</script>
 	</body>
 </html>
